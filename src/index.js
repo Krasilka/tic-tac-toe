@@ -18,6 +18,13 @@ const Board = () => {
 
   const handleClickEvent = (i) => {
     const newSquares = [...squares];
+
+    const winnerDeclared = Boolean(calculateWinner(newSquares));
+    const squareFilled = Boolean(newSquares[i]);
+    if (winnerDeclared || squareFilled) {
+      return;
+    }
+
     newSquares[i] = xIsNext ? "X" : "O";
     setSquares(newSquares);
     setXIsNext(!xIsNext);
@@ -29,7 +36,10 @@ const Board = () => {
     );
   };
 
-  const status = `Next player: ${xIsNext ? "X" : "O"}`;
+  const winner = calculateWinner(squares);
+  const status = winner
+    ? `Winner: ${winner}`
+    : `Next player: ${xIsNext ? "X" : "O"}`;
   return (
     <div>
       <div className="status">{status}</div>
@@ -67,3 +77,25 @@ ReactDOM.render(
   </div>,
   document.getElementById("root")
 );
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8], //rows
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8], //columns
+    [0, 4, 8],
+    [2, 4, 6], //diagonals
+  ];
+
+  for (let line of lines) {
+    const [a, b, c] = line;
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a]; // 'X' or 'O'
+    }
+  }
+
+  return null;
+}
